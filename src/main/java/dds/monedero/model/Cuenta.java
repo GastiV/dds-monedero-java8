@@ -59,11 +59,9 @@ public class Cuenta {
     movimientos.add(movimiento);
   }
 
+
   public double getMontoExtraidoA(LocalDate fecha) {
-    return getMovimientos().stream()
-        .filter(movimiento -> !movimiento.isDeposito() && movimiento.getFecha().equals(fecha))
-        .mapToDouble(Movimiento::getMonto)
-        .sum();
+    return this.movimientosDeFecha(fecha).stream().mapToDouble(Movimiento::getMonto).sum();
   }
 
   public List<Movimiento> getMovimientos() {
@@ -78,14 +76,17 @@ public class Cuenta {
     this.saldo = saldo;
   }
 
-  private long filtrarDepositos(List<Movimiento> movimientos){
-    return movimientos.stream().filter(movimiento -> movimiento.isDeposito()).count();
+  private List<Movimiento> movimientosDeFecha(LocalDate fecha){
+    return (List<Movimiento>) this.obtenerExtracciones().stream().filter(movimiento -> movimiento.getFecha().equals(fecha));
   }
-  private long filtrarExtracciones(List<Movimiento> movimientos){
-    return movimientos.stream().filter(movimiento -> !movimiento.isDeposito()).count();
+  private List<Movimiento> obtenerDepositos(){
+    return (List<Movimiento>) this.getMovimientos().stream().filter(movimiento -> movimiento.isDeposito());
+  }
+  private List<Movimiento> obtenerExtracciones(){
+    return (List<Movimiento>) this.getMovimientos().stream().filter(movimiento -> !movimiento.isDeposito());
   }
   private long depositosRealizados(){
-    return this.filtrarDepositos(getMovimientos());
+    return this.obtenerDepositos().size();
   }
 
 }
