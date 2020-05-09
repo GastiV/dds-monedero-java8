@@ -27,9 +27,7 @@ public class Cuenta {
   }
 
   public void poner(double cuanto) {
-    if (cuanto <= 0) {
-      throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
-    }
+    new ValidarMontoPositivo(cuanto).invoke();
 
     if (this.depositosRealizados() >= 3) {
       throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
@@ -39,9 +37,7 @@ public class Cuenta {
   }
 
   public void sacar(double cuanto) {
-    if (cuanto <= 0) {
-      throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
-    }
+    new ValidarMontoPositivo(cuanto).invoke();
     if (getSaldo() - cuanto < 0) {
       throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
     }
@@ -89,4 +85,17 @@ public class Cuenta {
     return this.obtenerDepositos().size();
   }
 
+  private class ValidarMontoPositivo {
+    private double cuanto;
+
+    public ValidarMontoPositivo(double cuanto) {
+      this.cuanto = cuanto;
+    }
+
+    public void invoke() {
+      if (cuanto <= 0) {
+        throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
+      }
+    }
+  }
 }
