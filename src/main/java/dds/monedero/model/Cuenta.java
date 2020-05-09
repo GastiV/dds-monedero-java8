@@ -3,6 +3,7 @@ package dds.monedero.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import dds.monedero.exceptions.MaximaCantidadDepositosException;
 import dds.monedero.exceptions.MaximoExtraccionDiarioException;
@@ -58,9 +59,8 @@ public class Cuenta {
     }
   }
 
-  public void agregarMovimiento(LocalDate fecha, double cuanto, boolean esDeposito) {
-    Movimiento movimiento = new Movimiento(fecha, cuanto, esDeposito);
-    movimientos.add(movimiento);
+  public void agregarMovimiento(Movimiento nuevoMovimiento) {
+    movimientos.add(nuevoMovimiento);
   }
 
 
@@ -81,13 +81,13 @@ public class Cuenta {
   }
 
   private List<Movimiento> movimientosDeFecha(LocalDate fecha){
-    return (List<Movimiento>) this.obtenerExtracciones().stream().filter(movimiento -> movimiento.getFecha().equals(fecha));
+    return this.obtenerExtracciones().stream().filter(movimiento -> movimiento.getFecha().equals(fecha)).collect(Collectors.toList());
   }
   private List<Movimiento> obtenerDepositos(){
-    return (List<Movimiento>) this.getMovimientos().stream().filter(movimiento -> movimiento.isDeposito());
+    return this.getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).collect(Collectors.toList());
   }
   private List<Movimiento> obtenerExtracciones(){
-    return (List<Movimiento>) this.getMovimientos().stream().filter(movimiento -> !movimiento.isDeposito());
+    return this.getMovimientos().stream().filter(movimiento -> !movimiento.isDeposito()).collect(Collectors.toList());
   }
   private long depositosRealizados(){
     return this.obtenerDepositos().size();
