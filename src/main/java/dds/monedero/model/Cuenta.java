@@ -27,7 +27,7 @@ public class Cuenta {
   }
 
   public void poner(double cuanto) {
-    new ValidarMontoPositivo(cuanto).invoke();
+    validarMontoPositivo(cuanto);
 
     if (this.depositosRealizados() >= 3) {
       throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
@@ -36,13 +36,13 @@ public class Cuenta {
     new Movimiento(LocalDate.now(), cuanto, true).agregateA(this);
   }
 
-  public void sacar(double cuanto) {
-    validarMontoPositivo(cuanto);
-    validarNoExtraerMasDelSaldoQueHay(cuanto);
+  public void sacar(double monto) {
+    validarMontoPositivo(monto);
+    validarNoExtraerMasDelSaldoQueHay(monto);
     double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
     double limite = 1000 - montoExtraidoHoy;
-    validarNoExtraeMasDelLimite(cuanto, limite);
-    new Movimiento(LocalDate.now(), cuanto, false).agregateA(this);
+    validarNoExtraeMasDelLimite(monto, limite);
+    new Movimiento(LocalDate.now(), monto, false).agregateA(this);
   }
 
   private void validarNoExtraeMasDelLimite(double cuanto, double limite) {
